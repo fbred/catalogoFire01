@@ -1,4 +1,4 @@
-import { SET_POSTS, ADD_COMMENT } from '../actions/actionTypes';
+import { SET_POSTS, ADD_COMMENT,  CREATING_POST, POST_CREATED } from '../actions/actionTypes';
 
 const initialState = {
     posts: [/*{
@@ -19,7 +19,8 @@ const initialState = {
             email: 'usuario05@gmail.com',
             image: require('../../../assets/imgs/bw.jpg'),
             comments: []
-        }*/]
+        }*/],
+        isUploading: false,//para fazer o controle da interface gráfica(para mostrar e controlar o andamento da requisição/postagem)
 }
 
 const reducer = (state = initialState, action) => {
@@ -57,6 +58,16 @@ const reducer = (state = initialState, action) => {
                     })//a função map transforma os dados de um array
                 }
             } 
+            case CREATING_POST:
+                return {
+                    ...state,
+                    isUploading: true //seta true para mostrar que no momento o aplicativo está fazendo upload
+                }
+            case POST_CREATED:
+                return {
+                    ...state,
+                    isUploading: false //seta false quando o processo de upload terminar
+                }    
             default:
                 return state
         }

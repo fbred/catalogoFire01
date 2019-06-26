@@ -12,6 +12,17 @@ class AddPhoto extends Component {
         comment:''
     }
 
+    //componente do ciclo de vida (é cahamado depois que as propriedades forão atualizadas)
+    componentDidUpdate = prevProps => {
+        if(prevProps.loading && !this.props.loading){
+            this.setState({
+                image: null, //limpa os campos assim que a postagem é feita
+                comment: ''
+            })
+            this.props.navigation.navigate('Feed')//assim que termina a postagem ele navega para o feed
+        }
+    }
+
     pickImage = () => {
         if(!this.props.name){
             Alert.alert('Falha!', noUser)
@@ -46,8 +57,8 @@ class AddPhoto extends Component {
                 comment: this.state.comment
             }]
        })
-       this.setState({ image: null, comment: ''})//limpa o estado apos salvar a postagem
-       this.props.navigation.navigate('Feed')//navega para a tela de postagem após salvar
+       /*this.setState({ image: null, comment: ''})//limpa o estado apos salvar a postagem
+       this.props.navigation.navigate('Feed')//navega para a tela de postagem após salvar*/
     }
 
     render(){
@@ -67,7 +78,9 @@ class AddPhoto extends Component {
                         editable={this.props.name != null}
                         value={this.state.comment}
                         onChangeText={comment => this.setState( { comment })}/>
-                      <TouchableOpacity onPress={this.save} style={styles.buttom}>
+                      <TouchableOpacity onPress={this.save}
+                        disabled={this.props.loading}
+                        style={[styles.buttom, this.props.loading ? styles.buttonDisabled: null]}>
                         <Text style={styles.buttonText}>Salvar</Text>
                     </TouchableOpacity>
                 </View>
@@ -111,14 +124,18 @@ const styles = StyleSheet.create({
     input: {
         marginTop: 20,
         width: '90%'
+    },
+    buttonDisabled: {
+        backgroundColor: '#AAA'
     }
 })
 
 //mapeando o stado da aplicação e retornando
-const mapStateToProps = ({ user }) => {
+const mapStateToProps = ({ user, posts }) => {
     return{
         email: user.email,
         name: user.name,
+        loading: posts.isUploading
     }
 }
 
