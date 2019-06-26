@@ -1,7 +1,7 @@
-import { ADD_POST, ADD_COMMENT } from '../actions/actionTypes';
+import { SET_POSTS, ADD_COMMENT } from '../actions/actionTypes';
 
 const initialState = {
-    posts: [{
+    posts: [/*{
         id: Math.random(),
         nickname: 'Fábio Lima',
         email: 'usuario01@gmail.com',
@@ -19,20 +19,26 @@ const initialState = {
             email: 'usuario05@gmail.com',
             image: require('../../../assets/imgs/bw.jpg'),
             comments: []
-        }]
+        }*/]
 }
 
 const reducer = (state = initialState, action) => {
 
         switch (action.type) {
-            case ADD_POST:
+           /* case ADD_POST:
                 return{
                     ...state,
                     //concatenando (adicionando) um novo post aos posts existentes
                     posts: state.posts.concat({
                         ...action.payload
                     })
-                }
+                }*/
+                case SET_POSTS: {
+                   return {
+                    ...state,
+                    posts: action.payload
+                   } 
+                } 
             case ADD_COMMENT:{
                 return {
                     ...state,

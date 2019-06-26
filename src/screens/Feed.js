@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { StyleSheet, FlatList, View } from 'react-native';
 import Header from '../components/Header';
 import Post from '../components/post';
+import { fetchPosts } from '../store/actions/posts';
 
 class Feed extends Component {
     /*state = {
@@ -26,6 +27,9 @@ class Feed extends Component {
             comments: []
         }]
     }*/
+    componentDidMount = () => {
+        this.props.onFetchPosts()
+    }
 
     render(){
         return (
@@ -56,5 +60,10 @@ const mapStateToProps = ({ posts }) => {
     }
 }
 
-export default connect(mapStateToProps,null)(Feed);
+mapDispatchToProps = dispatch => {
+    return {
+        onFetchPosts: () => dispatch(fetchPosts())
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Feed);
 //export default Feed;
