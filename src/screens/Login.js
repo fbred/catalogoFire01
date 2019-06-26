@@ -12,9 +12,15 @@ class Login extends Component {
         senha: ''
     }
 
+    componentDidUpdate = prevProps => {
+        if (prevProps.isLoading && !this.props.isLoading) {
+            this.props.navigation.navigate('Profile')
+        }
+    }
+
     login = () =>{
         this.props.onLogin({...this.state});
-        this.props.navigation.navigate('Profile');
+        //this.props.navigation.navigate('Profile');
     }
 
     render() {
@@ -72,6 +78,12 @@ const styles = StyleSheet.create({
     }
 })
 
+const mapStateToProps = ({ user }) => {
+    return {
+        isLoading: user.isLoading
+    }
+}
+
 //metodo responsável por mapear e repassar as actions
 const mapDispatchToProps = dispatch => {
     //objeto com todos os métodos e propriedades do login
@@ -81,4 +93,4 @@ const mapDispatchToProps = dispatch => {
 }
 
 //exportando e fazendo a conexão do componente do modulo atráves do redux
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
