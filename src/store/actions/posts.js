@@ -4,6 +4,7 @@ import {
      CREATING_POST,
      POST_CREATED
      } from './actionTypes';
+import { setMessage } from './message'
 import axios from 'axios';
 
 
@@ -19,14 +20,28 @@ export const addPost = post => {
                 image: post.image.base64
             }
         })
-            .catch(err => console.log(err))
+            .catch(err => {
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro Inesperado!'
+                }))
+            })
             .then(resp => { //caso o upload seja feito com sucesso cai neste then
                 post.image = resp.data.imageUrl
                 axios.post('/post.json', { ...post })
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        dispatch(setMessage({
+                            title: 'Erro',
+                            text: 'Ocorreu um erro Inesperado!'
+                        }))
+                    })
                     .then(res => {
                         dispatch(fetchPosts())//dispatch para obter os posts novamente
                         dispatch(postCreated())//post criado
+                      /*  dispatch(setMessage({
+                            title: 'Sucesso',
+                            text: 'Postagem Realizada!'
+                        }))*/
                     })
             })
     }
@@ -39,12 +54,22 @@ export const addComment = payload => {
     }*/
     return dispatch => {
         axios.get(`/post/${payload.postId}.json`)
-            .catch(err => console.log(err))
+            .catch(err =>{
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro Inesperado!'
+                }))
+            })
             .then(res => { //ao ser be sucedidada a requisicção do comentario no real time database cai no then
                 const comments =  res.data.comments || []//contem o post resgatado no firebase através do ID / caso esteja nulo coloca um array vazio
                 comments.push(payload.comment) //adiciona o comentário dentro do array
                 axios.patch(`/post/${payload.postId}.json`, { comments }) //atualização no firebase nos dados resgatados pelo ID / atualiza somente os comentários
-                    .catch(err => console.log(err))
+                    .catch(err => {
+                        dispatch(setMessage({
+                            title: 'Erro',
+                            text: 'Ocorreu um erro Inesperado!'
+                        }))
+                    })
                     .then(res => { //resposta da atualização do item no real time database
                         dispatch(fetchPosts()) //faz a chamada da action para mostrar a lista atualizada
                     })
@@ -63,7 +88,12 @@ export const setPosts = posts => {
 export const fetchPosts = () => {
     return dispatch => {
         axios.get('/post.json')
-            .catch(err => console.log(err))
+            .catch(err => {
+                dispatch(setMessage({
+                    title: 'Erro',
+                    text: 'Ocorreu um erro Inesperado!'
+                }))
+            })
             .then(res => { // a resposta do get aqui é para dar a lista das postagems no banco do firebase
                 const rawPosts = res.data;
                 const posts = [];
