@@ -9,7 +9,7 @@ import axios from 'axios';
 
 
 export const addPost = post => {
-   return dispatch => {
+   return (dispatch, getState) => {
        //processo de publicação do post
         dispatch(creatingPost())
         axios({
@@ -28,7 +28,7 @@ export const addPost = post => {
             })
             .then(resp => { //caso o upload seja feito com sucesso cai neste then
                 post.image = resp.data.imageUrl
-                axios.post('/post.json', { ...post })
+                axios.post(`/post.json?auth=${getState().user.token}`, { ...post })
                     .catch(err => {
                         dispatch(setMessage({
                             title: 'Erro',
@@ -52,7 +52,7 @@ export const addComment = payload => {
         type: ADD_COMMENT,
         payload 
     }*/
-    return dispatch => {
+    return (dispatch, getState) => {
         axios.get(`/post/${payload.postId}.json`)
             .catch(err =>{
                 dispatch(setMessage({
@@ -63,7 +63,7 @@ export const addComment = payload => {
             .then(res => { //ao ser be sucedidada a requisicção do comentario no real time database cai no then
                 const comments =  res.data.comments || []//contem o post resgatado no firebase através do ID / caso esteja nulo coloca um array vazio
                 comments.push(payload.comment) //adiciona o comentário dentro do array
-                axios.patch(`/post/${payload.postId}.json`, { comments }) //atualização no firebase nos dados resgatados pelo ID / atualiza somente os comentários
+                axios.patch(`/post/${payload.postId}.json?auth=${getState().user.token}`, { comments }) //atualização no firebase nos dados resgatados pelo ID / atualiza somente os comentários
                     .catch(err => {
                         dispatch(setMessage({
                             title: 'Erro',

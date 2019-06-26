@@ -38,7 +38,7 @@ export const createUser = user => {
             .then(res => {
                 if (res.data.localId) {
                     axios.put(`/users/${res.data.localId}.json`, {
-                        name: user.nome
+                        name: user.name
                  })
                     .catch(err => {
                         dispatch(setMessage({
@@ -53,10 +53,12 @@ export const createUser = user => {
                         }))*/
 
                         //loga o usuário automáticamente caso a criação tenha tido sucesso
-                        delete user.password
+                       /* delete user.password
                         user.id = res.data.localId
                         dispatch(userLogged(user))
-                        dispatch(userLoaded())
+                        dispatch(userLoaded())*/
+
+                        dispatch(login(user))//apóes realizar o cadastro no banco realiza a chamada do método Login
                     })
             }
         })
@@ -92,6 +94,7 @@ export const login = user => {
             })
             .then(res => {
                 if(res.data.localId) {
+                    user.token = res.data.idToken
                     axios.get(`/users/${res.data.localId}.json`)
                     .catch(err => {
                         dispatch(setMessage({
