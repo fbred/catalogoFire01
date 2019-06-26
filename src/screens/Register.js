@@ -5,9 +5,20 @@ import { createUser } from '../store/actions/user'
 
 class Register extends Component {
     state = {
-        nome: '',
+        name: '',
         email: '',
         senha: ''
+    }
+
+    componentDidUpdate = prevProps => {
+        if (prevProps.isLoading && !this.props.isLoading) {
+            this.setState({
+                name: '',
+                email: '',
+                senha: ''
+            })  
+            this.props.navigation.navigate('Profile') //ou para o (Feed) 
+        }
     }
 
     render(){
@@ -16,7 +27,7 @@ class Register extends Component {
 
                 <TextInput placeholder='Nome' style={styles.input}
                     autoFocus={true} value={this.state.name}
-                    onChangeText={nome => this.setState({ nome })}/>
+                    onChangeText={name => this.setState({ name })}/>
 
                 <TextInput placeholder='E-mail' style={styles.input} 
                     keyboardType='email-address' value={this.state.email}
@@ -63,11 +74,17 @@ const styles = StyleSheet.create({
     }
 })
 
+const mapStateToProps = ({ user }) => {
+    return {
+        isLoading: user.isLoading
+    }
+}
+
 const mapDispatchToProps = dispatch => {
     return {
         onCreateUser: user => dispatch(createUser(user))
     }
 }
 
-export default connect (null, mapDispatchToProps)(Register)
+export default connect (mapStateToProps, mapDispatchToProps)(Register)
 //export default Register;

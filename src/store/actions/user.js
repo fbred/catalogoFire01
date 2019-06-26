@@ -23,6 +23,7 @@ export const lougout = ()=>  {
 //action para criar um usuário
 export const createUser = user => {
     return dispatch => {
+        dispatch(loadingUser())
         axios.post(`${authBaseURL}/signupNewUser?key=${API_KEY}`, {
             email: user.email,
             password:  user.senha,
@@ -45,11 +46,17 @@ export const createUser = user => {
                             text: 'Ocorreu um erro Inesperado!'
                         }))
                     })
-                    .then(res => {
-                        dispatch(setMessage({
+                    .then(() => {
+                        /*dispatch(setMessage({
                             title: 'Sucesso',
                             text: 'Usuário Criado com Sucesso!'
-                        }))
+                        }))*/
+
+                        //loga o usuário automáticamente caso a criação tenha tido sucesso
+                        delete user.password
+                        user.id = res.data.localId
+                        dispatch(userLogged(user))
+                        dispatch(userLoaded())
                     })
             }
         })
@@ -80,7 +87,7 @@ export const login = user => {
             .catch(err => {
                 dispatch(setMessage({
                     title: 'Erro',
-                    text: 'Ocorreu um erro Inesperado!'
+                    text: 'Usuário ou Senha errados!'
                 }))
             })
             .then(res => {
@@ -93,7 +100,7 @@ export const login = user => {
                         }))
                     })
                     .then(res => {
-                        user.password = null
+                        delete user.password
                         user.name = res.data.name
                         dispatch(userLogged(user))
                         dispatch(userLoaded())
