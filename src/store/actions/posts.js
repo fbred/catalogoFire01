@@ -33,9 +33,22 @@ export const addPost = post => {
 }
 
 export const addComment = payload => {
-    return {
+    /*return {
         type: ADD_COMMENT,
         payload 
+    }*/
+    return dispatch => {
+        axios.get(`/post/${payload.postId}.json`)
+            .catch(err => console.log(err))
+            .then(res => { //ao ser be sucedidada a requisicção do comentario no real time database cai no then
+                const comments =  res.data.comments || []//contem o post resgatado no firebase através do ID / caso esteja nulo coloca um array vazio
+                comments.push(payload.comment) //adiciona o comentário dentro do array
+                axios.patch(`/post/${payload.postId}.json`, { comments }) //atualização no firebase nos dados resgatados pelo ID / atualiza somente os comentários
+                    .catch(err => console.log(err))
+                    .then(res => { //resposta da atualização do item no real time database
+                        dispatch(fetchPosts()) //faz a chamada da action para mostrar a lista atualizada
+                    })
+            })
     }
 }
 
